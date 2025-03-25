@@ -46,3 +46,50 @@ def delete_user(id)
     DB.execute('DELETE FROM users WHERE id = ?', [id])
     puts "Usuario con ID #{id} eliminado"
 end
+
+
+
+
+def menu
+    loop do
+        puts "\n--- CRUD usuarios ---"
+        puts "1. Crear usuario"
+        puts "2. ver usuarios"
+        puts "3. Actualizar usuario"
+        puts "4. Eliminar usuario"
+        puts "5. Salir"
+
+        print "Selecciona una opción: "
+        opcion = gets.chomp.to_i
+
+    case opcion
+    when 1
+      print "Nombre: "
+      name = gets.chomp
+      print "Email: "
+      email = gets.chomp
+      create_user(name, email)
+    when 2
+      read_users
+    when 3
+      print "ID del usuario a actualizar: "
+      id = gets.chomp.to_i
+      print "Nuevo Nombre: "
+      name = gets.chomp
+      print "Nuevo Email: "
+      email = gets.chomp
+      update_user(id, name, email)
+    when 4
+      print "ID del usuario a eliminar: "
+      id = gets.chomp.to_i
+      delete_user(id)
+    when 5
+      puts "Saliendo..."
+      break
+    else
+      puts "Opción no válida. Intenta de nuevo."
+    end
+  end
+end
+
+menu
