@@ -1,7 +1,10 @@
 require 'sqlite3'
+require 'bcrypt'
 
 # connecting db
 DB = SQLite3::Database.new('users.db')
+
+DB.results_as_hash = true
 
 # create table if not exists
 
@@ -9,15 +12,51 @@ DB.execute <<-SQL
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
     );
 SQL
 
+# variable global para almacenar la sesión
+$session_user = nil
+
+def hash_password(password)
+  BCrypt::Password.create(password)
+end 
+
+def verify_password(hashed_password, password)
+  BCrypt::Password.new(hashed_password) == password
+end 
+
 
 # create user
-def create_user(name, email)
-    DB.execute('INSERT INTO users (name, email) VALUES (?, ?)', [name, email])
+def create_user(name, email, password)
+    hashed_password = hash_password(password)
+    DB.execute('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashed_password])
     puts "Usuario #{name} creado con exito."
+end
+
+def login(email, password)
+  user = DB.execute('SELECT * FROM users WHERE email = ?', [email]).first
+  if user && verify_password(user['password'], password)
+    $session_user = user 
+    puts "Bienvenido, #{user['name']}! Has iniciado sesión correctamente"
+  else 
+    puts "Credenciales incorrectas"
+  end 
+end
+
+def logout
+  $session_user = nil 
+  puts "Has cerrado sesión"
+end
+
+def current_user
+  if $session_user
+    puts "usuario actual: #{$session_user['name']} (Email: #{$session_user['email']})"
+  else 
+    puts "No hay usuario autenticado"
+  end 
 end
 
 
