@@ -92,10 +92,10 @@ end
 def menu
     loop do
         puts "\n--- CRUD usuarios ---"
-        puts "1. Crear usuario"
-        puts "2. ver usuarios"
-        puts "3. Actualizar usuario"
-        puts "4. Eliminar usuario"
+        puts "1. Registrarse"
+        puts "2. Iniciar sesión"
+        puts "3. Ver usuario actual"
+        puts "4. Cerrar sesión"
         puts "5. Salir"
 
         print "Selecciona una opción: "
@@ -107,21 +107,19 @@ def menu
       name = gets.chomp
       print "Email: "
       email = gets.chomp
-      create_user(name, email)
+      print "Contraseña: "
+      password = gets.chomp
+      create_user(name, email, password)
     when 2
-      read_users
-    when 3
-      print "ID del usuario a actualizar: "
-      id = gets.chomp.to_i
-      print "Nuevo Nombre: "
-      name = gets.chomp
-      print "Nuevo Email: "
+      print "Email: "
       email = gets.chomp
-      update_user(id, name, email)
+      print "Contraseña: "
+      password = gets.chomp
+      login(email, password)
+    when 3
+      current_user
     when 4
-      print "ID del usuario a eliminar: "
-      id = gets.chomp.to_i
-      delete_user(id)
+      logout
     when 5
       puts "Saliendo..."
       break
